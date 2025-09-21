@@ -11,8 +11,8 @@ public class Partida {
 
     public Partida() {
         this.tabuleiro = new Tabuleiro();
-        this.jogadorBranco = new Jogador(Cor.BRANCO);
-        this.jogadorPreto = new Jogador(Cor.PRETO);
+        this.jogadorBranco = new Jogador("Branco", Cor.BRANCO);
+        this.jogadorPreto = new Jogador("Preto", Cor.PRETO);
         this.pecasCapturadas = new ArrayList<>();
 
         this.tabuleiro.iniciarPecas(jogadorBranco, jogadorPreto);
