@@ -18,9 +18,7 @@ public class Peao extends Peca {
         // 1. Movimento simples de uma casa para frente
         Posicao umaCasaFrente = new Posicao(linhaAtual + direcao, colunaAtual);
         if (isPosicaoValida(umaCasaFrente) && tabuleiro.getCasa(umaCasaFrente).isVazia()) {
-            movimentosPossiveis.add(new Movimento(posicaoAtual, umaCasaFrente, this, null, null)); // Jogador será
-                                                                                                   // preenchido na
-                                                                                                   // classe Partida
+            movimentosPossiveis.add(new Movimento(posicao, umaCasaFrente, this, null, null)); // Jogador será preenchido na classe Partida
 
             // 2. Primeiro movimento (duas casas para frente)
             // Só pode ser feito se o movimento de uma casa também for possível.
@@ -29,7 +27,7 @@ public class Peao extends Peca {
 
             Posicao duasCasasFrente = new Posicao(linhaAtual + (2 * direcao), colunaAtual);
             if (estaNaCasaInicial && isPosicaoValida(duasCasasFrente) && tabuleiro.getCasa(duasCasasFrente).isVazia()) {
-                movimentosPossiveis.add(new Movimento(posicaoAtual, duasCasasFrente, this, null, null));
+                movimentosPossiveis.add(new Movimento(posicao, duasCasasFrente, this, null, null));
             }
         }
 
@@ -40,7 +38,7 @@ public class Peao extends Peca {
         if (isPosicaoValida(capturaEsquerda) && tabuleiro.getCasa(capturaEsquerda).isOcupada()) {
             Peca pecaAlvo = tabuleiro.getPeca(capturaEsquerda);
             if (pecaAlvo.getCor() != this.getCor()) { // Verifica se a peça é do adversário
-                movimentosPossiveis.add(new Movimento(posicaoAtual, capturaEsquerda, this, pecaAlvo, null));
+                movimentosPossiveis.add(new Movimento(posicao, capturaEsquerda, this, pecaAlvo, null));
             }
         }
 
@@ -49,7 +47,7 @@ public class Peao extends Peca {
         if (isPosicaoValida(capturaDireita) && tabuleiro.getCasa(capturaDireita).isOcupada()) {
             Peca pecaAlvo = tabuleiro.getPeca(capturaDireita);
             if (pecaAlvo.getCor() != this.getCor()) { // Verifica se a peça é do adversário
-                movimentosPossiveis.add(new Movimento(posicaoAtual, capturaDireita, this, pecaAlvo, null));
+                movimentosPossiveis.add(new Movimento(posicao, capturaDireita, this, pecaAlvo, null));
             }
         }
 
