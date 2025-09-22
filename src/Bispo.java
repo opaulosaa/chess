@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Bispo extends Peca{
+public class Bispo extends Peca {
     public Bispo(Cor cor, int pontuacao) {
         super(cor, 3);
     }
@@ -15,10 +15,10 @@ public class Bispo extends Peca{
 
         // 4 direções diagonais: (dLinha, dColuna)
         int[][] direcoes = {
-                {-1, -1},
-                {-1,  1},
-                { 1, -1},
-                { 1,  1}
+                { -1, -1 },
+                { -1, 1 },
+                { 1, -1 },
+                { 1, 1 }
         };
 
         for (int[] d : direcoes) {
@@ -27,7 +27,8 @@ public class Bispo extends Peca{
             int passo = 1;
             while (true) {
                 Posicao destino = new Posicao(linhaAtual + passo * dLinha, colunaAtual + passo * dColuna);
-                if (!isPosicaoValida(destino)) break;
+                if (!isPosicaoValida(destino))
+                    break;
 
                 if (tabuleiro.getCasa(destino).isVazia()) {
                     movimentosPossiveis.add(new Movimento(posicaoAtual, destino, this, null, null));

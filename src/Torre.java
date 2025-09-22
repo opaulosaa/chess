@@ -15,9 +15,9 @@ public class Torre extends Peca {
 
         // Explora quatro direções: cima, baixo, esquerda, direita
         explorarDirecao(-1, 0, linha, coluna, posicao, tabuleiro, movimentosPossiveis); // cima
-        explorarDirecao(1, 0, linha, coluna, posicao, tabuleiro, movimentosPossiveis);  // baixo
+        explorarDirecao(1, 0, linha, coluna, posicao, tabuleiro, movimentosPossiveis); // baixo
         explorarDirecao(0, -1, linha, coluna, posicao, tabuleiro, movimentosPossiveis); // esquerda
-        explorarDirecao(0, 1, linha, coluna, posicao, tabuleiro, movimentosPossiveis);  // direita
+        explorarDirecao(0, 1, linha, coluna, posicao, tabuleiro, movimentosPossiveis); // direita
 
         return movimentosPossiveis;
     }
@@ -27,7 +27,7 @@ public class Torre extends Peca {
      * Se encontrar peça adversária, adiciona movimento de captura e pára.
      */
     private void explorarDirecao(int dLinha, int dColuna, int linhaInicial, int colunaInicial,
-                                 Posicao posicao, Tabuleiro tabuleiro, List<Movimento> movimentos) {
+            Posicao posicao, Tabuleiro tabuleiro, List<Movimento> movimentos) {
         int r = linhaInicial + dLinha;
         int c = colunaInicial + dColuna;
 

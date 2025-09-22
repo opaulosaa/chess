@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Peao extends Peca{
+public class Peao extends Peca {
     public Peao(Cor cor, int pontuacao) {
         super(cor, 1);
     }
@@ -11,14 +11,16 @@ public class Peao extends Peca{
         List<Movimento> movimentosPossiveis = new ArrayList<>();
         int linhaAtual = posicao.linha();
         int colunaAtual = posicao.coluna();
-        //Brancas movem pra cima(índice da linha diminui)
-        //Pretas movem pra baixo(índice da linha aumenta)
+        // Brancas movem pra cima(índice da linha diminui)
+        // Pretas movem pra baixo(índice da linha aumenta)
         int direcao = (this.getCor() == Cor.BRANCO) ? -1 : 1;
 
         // 1. Movimento simples de uma casa para frente
         Posicao umaCasaFrente = new Posicao(linhaAtual + direcao, colunaAtual);
         if (isPosicaoValida(umaCasaFrente) && tabuleiro.getCasa(umaCasaFrente).isVazia()) {
-            movimentosPossiveis.add(new Movimento(posicaoAtual, umaCasaFrente, this, null, null)); // Jogador será preenchido na classe Partida
+            movimentosPossiveis.add(new Movimento(posicaoAtual, umaCasaFrente, this, null, null)); // Jogador será
+                                                                                                   // preenchido na
+                                                                                                   // classe Partida
 
             // 2. Primeiro movimento (duas casas para frente)
             // Só pode ser feito se o movimento de uma casa também for possível.
@@ -57,6 +59,5 @@ public class Peao extends Peca{
     private boolean isPosicaoValida(Posicao posicao) {
         return posicao.linha() >= 0 && posicao.linha() < Tabuleiro.LINHAS &&
                 posicao.coluna() >= 0 && posicao.coluna() < Tabuleiro.COLUNAS;
-    }
     }
 }
