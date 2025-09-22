@@ -12,4 +12,8 @@ public class Tabuleiro {
             }
         }
     }
+
+    public void iniciarPecas(Jogador jogadorBranco, Jogador jogadorPreto){
+
+    }
 }
