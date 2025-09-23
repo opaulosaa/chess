@@ -8,12 +8,14 @@ public class Partida {
     private Jogador jogadorAtual;
     private EstadoPartida estado;
     private List<Peca> pecasCapturadas;
+    private HistoricoMovimentos historico;
 
     public Partida() {
         this.tabuleiro = new Tabuleiro();
         this.jogadorBranco = new Jogador("Branco", Cor.BRANCO);
         this.jogadorPreto = new Jogador("Preto", Cor.PRETO);
         this.pecasCapturadas = new ArrayList<>();
+        this.historico = new HistoricoMovimentos();
 
         this.tabuleiro.iniciarPecas(jogadorBranco, jogadorPreto);
         this.jogadorAtual = jogadorBranco;
@@ -32,6 +34,8 @@ public class Partida {
             System.out.println("Movimento inválido!");
             return false;
         }
+    // Registra apenas o horário do movimento
+    historico.adicionarMovimento();
         executarMovimento(movimento);
 
         // Verifica xeque e xeque-mate após o movimento
