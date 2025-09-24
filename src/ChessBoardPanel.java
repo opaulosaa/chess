@@ -4,7 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Painel que exibe o tabuleiro de xadrez e gerencia as interações do jogo.
@@ -29,9 +31,12 @@ public class ChessBoardPanel extends JPanel {
     private static final Color SELECTED_SQUARE = new Color(255, 255, 0, 150);
     private static final Color POSSIBLE_MOVE = new Color(0, 255, 0, 100);
 
+    private Map<String, ImageIcon> pieceImages;
+
     public ChessBoardPanel(ChessGUI parentFrame) {
         this.parentFrame = parentFrame;
         this.selectedPosition = null;
+        loadPieceImages();
         initializePanel();
     }
 
@@ -135,6 +140,44 @@ public class ChessBoardPanel extends JPanel {
         return panel;
     }
 
+    private void loadPieceImages() {
+        pieceImages = new HashMap<>();
+
+        // Peças Brancas
+        pieceImages.put("BRANCO_REI", loadImage("/assets/Brei.png"));
+        pieceImages.put("BRANCO_DAMA", loadImage("/assets/Brainha.png"));
+        pieceImages.put("BRANCO_TORRE", loadImage("/assets/Btorre.png"));
+        pieceImages.put("BRANCO_BISPO", loadImage("/assets/Bbispo.png"));
+        pieceImages.put("BRANCO_CAVALO", loadImage("/assets/Bcavalo.png"));
+        pieceImages.put("BRANCO_PEAO", loadImage("/assets/Bpeao.png"));
+
+        // Peças Pretas
+        pieceImages.put("PRETO_REI", loadImage("/assets/Prei.png"));
+        pieceImages.put("PRETO_DAMA", loadImage("/assets/Pdama.png"));
+        pieceImages.put("PRETO_TORRE", loadImage("/assets/Ptorre.png"));
+        pieceImages.put("PRETO_BISPO", loadImage("/assets/Pbispo.png"));
+        pieceImages.put("PRETO_CAVALO", loadImage("/assets/Pcavalo.png"));
+        pieceImages.put("PRETO_PEAO", loadImage("/assets/Ppeao.png"));
+    }
+
+    private ImageIcon loadImage(String resourcePath) {
+        try {
+            java.net.URL imgURL = getClass().getResource(resourcePath);
+            if (imgURL != null) {
+                ImageIcon originalIcon = new ImageIcon(imgURL);
+                Image image = originalIcon.getImage();
+                Image scaledImage = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+                return new ImageIcon(scaledImage);
+            } else {
+                System.err.println("Não foi possível encontrar o recurso: " + resourcePath);
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * Inicializa uma partida manual
      */
@@ -171,11 +214,12 @@ public class ChessBoardPanel extends JPanel {
                 Posicao pos = new Posicao(linha, coluna);
                 Peca peca = partida.getTabuleiro().getPeca(pos);
 
-                // Define o texto do botão baseado na peça
+                // Define o ícone do botão baseado na peça
                 if (peca != null) {
-                    button.setText(getPieceSymbol(peca));
-                    button.setForeground(peca.getCor() == Cor.BRANCO ? Color.WHITE : Color.BLACK);
+                    button.setIcon(getPieceImage(peca));
+                    button.setText(""); // Limpa o texto se houver imagem
                 } else {
+                    button.setIcon(null);
                     button.setText("");
                 }
 
@@ -364,26 +408,19 @@ public class ChessBoardPanel extends JPanel {
     }
 
     /**
-     * Retorna o símbolo Unicode da peça
+     * Retorna a imagem da peça
      */
-    private String getPieceSymbol(Peca peca) {
-        boolean isBranco = peca.getCor() == Cor.BRANCO;
 
-        if (peca instanceof Rei) {
-            return isBranco ? "R" : "r";
-        } else if (peca instanceof Dama) {
-            return isBranco ? "D" : "d";
-        } else if (peca instanceof Torre) {
-            return isBranco ? "T" : "t";
-        } else if (peca instanceof Bispo) {
-            return isBranco ? "B" : "b";
-        } else if (peca instanceof Cavalo) {
-            return isBranco ? "C" : "c";
-        } else if (peca instanceof Peao) {
-            return isBranco ? "P" : "p";
-        }
+    private ImageIcon getPieceImage(Peca peca) {
+        String cor = peca.getCor().name();
+        String tipo = peca.getClass().getSimpleName().toUpperCase();
 
-        return "?";
+        if (tipo.equals("RAINHA"))
+            tipo = "DAMA"; // ajustar nome
+        if (tipo.equals("CAVAL"))
+            tipo = "CAVALO"; // se sua classe estiver com nome diferente
+
+        return pieceImages.get(cor + "_" + tipo);
     }
 
     /**
