@@ -2,17 +2,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Painel que exibe o tabuleiro de xadrez e gerencia as interações do jogo.
- * Suporta tanto partidas manuais quanto simuladas.
+ * Suporta partidas manuais e simuladas.
  */
 public class ChessBoardPanel extends JPanel {
+
     private ChessGUI parentFrame;
     private Partida partida;
     private JButton[][] boardButtons;
@@ -45,16 +44,13 @@ public class ChessBoardPanel extends JPanel {
         setBackground(new Color(245, 245, 245));
 
         // Painel superior com informações
-        JPanel topPanel = createTopPanel();
-        add(topPanel, BorderLayout.NORTH);
+        add(createTopPanel(), BorderLayout.NORTH);
 
-        // Painel central com o tabuleiro
-        JPanel boardPanel = createBoardPanel();
-        add(boardPanel, BorderLayout.CENTER);
+        // Painel central com tabuleiro
+        add(createBoardPanel(), BorderLayout.CENTER);
 
         // Painel inferior com botões
-        JPanel bottomPanel = createBottomPanel();
-        add(bottomPanel, BorderLayout.SOUTH);
+        add(createBottomPanel(), BorderLayout.SOUTH);
     }
 
     private JPanel createTopPanel() {
@@ -89,21 +85,14 @@ public class ChessBoardPanel extends JPanel {
                 button.setBorderPainted(true);
 
                 // Cor alternada do tabuleiro
-                if ((linha + coluna) % 2 == 0) {
-                    button.setBackground(LIGHT_SQUARE);
-                } else {
-                    button.setBackground(DARK_SQUARE);
-                }
+                button.setBackground((linha + coluna) % 2 == 0 ? LIGHT_SQUARE : DARK_SQUARE);
 
                 final int finalLinha = linha;
                 final int finalColuna = coluna;
 
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (isManualMode && !isSimulationRunning) {
-                            handleSquareClick(finalLinha, finalColuna);
-                        }
+                button.addActionListener(e -> {
+                    if (isManualMode && !isSimulationRunning) {
+                        handleSquareClick(finalLinha, finalColuna);
                     }
                 });
 
@@ -178,9 +167,6 @@ public class ChessBoardPanel extends JPanel {
         }
     }
 
-    /**
-     * Inicializa uma partida manual
-     */
     public void initializeManualGame() {
         partida = new Partida();
         isManualMode = true;
@@ -191,9 +177,6 @@ public class ChessBoardPanel extends JPanel {
         updateStatus();
     }
 
-    /**
-     * Inicializa uma partida simulada
-     */
     public void initializeSimulatedGame() {
         partida = new Partida();
         isManualMode = false;
@@ -204,9 +187,6 @@ public class ChessBoardPanel extends JPanel {
         updateStatus();
     }
 
-    /**
-     * Atualiza a exibição do tabuleiro
-     */
     private void updateBoard() {
         for (int linha = 0; linha < 8; linha++) {
             for (int coluna = 0; coluna < 8; coluna++) {
@@ -214,37 +194,25 @@ public class ChessBoardPanel extends JPanel {
                 Posicao pos = new Posicao(linha, coluna);
                 Peca peca = partida.getTabuleiro().getPeca(pos);
 
-                // Define o ícone do botão baseado na peça
                 if (peca != null) {
                     button.setIcon(getPieceImage(peca));
-                    button.setText(""); // Limpa o texto se houver imagem
+                    button.setText("");
                 } else {
                     button.setIcon(null);
                     button.setText("");
                 }
 
-                // Restaura cor original
-                if ((linha + coluna) % 2 == 0) {
-                    button.setBackground(LIGHT_SQUARE);
-                } else {
-                    button.setBackground(DARK_SQUARE);
-                }
+                button.setBackground((linha + coluna) % 2 == 0 ? LIGHT_SQUARE : DARK_SQUARE);
             }
         }
 
-        // Destaca posição selecionada
         if (selectedPosition != null) {
             JButton selectedButton = boardButtons[selectedPosition.linha()][selectedPosition.coluna()];
             selectedButton.setBackground(SELECTED_SQUARE);
-
-            // Destaca movimentos possíveis
             highlightPossibleMoves();
         }
     }
 
-    /**
-     * Destaca os movimentos possíveis para a peça selecionada
-     */
     private void highlightPossibleMoves() {
         if (selectedPosition == null)
             return;
@@ -259,7 +227,6 @@ public class ChessBoardPanel extends JPanel {
             Posicao destino = movimento.destino();
             JButton button = boardButtons[destino.linha()][destino.coluna()];
 
-            // Mistura a cor original com verde para indicar movimento possível
             Color originalColor = ((destino.linha() + destino.coluna()) % 2 == 0) ? LIGHT_SQUARE : DARK_SQUARE;
             Color mixedColor = new Color(
                     (originalColor.getRed() + POSSIBLE_MOVE.getRed()) / 2,
@@ -269,14 +236,10 @@ public class ChessBoardPanel extends JPanel {
         }
     }
 
-    /**
-     * Manipula o clique em uma casa do tabuleiro
-     */
     private void handleSquareClick(int linha, int coluna) {
         Posicao clickedPosition = new Posicao(linha, coluna);
 
         if (selectedPosition == null) {
-            // Primeira seleção - seleciona uma peça
             Peca peca = partida.getTabuleiro().getPeca(clickedPosition);
             if (peca != null && peca.getCor() == partida.getJogadorAtual().getCor()) {
                 selectedPosition = clickedPosition;
@@ -284,14 +247,11 @@ public class ChessBoardPanel extends JPanel {
                 statusLabel.setText("Peça selecionada. Escolha o destino.");
             }
         } else {
-            // Segunda seleção - tenta mover
             if (clickedPosition.equals(selectedPosition)) {
-                // Clicou na mesma posição - deseleciona
                 selectedPosition = null;
                 updateBoard();
                 statusLabel.setText("Seleção cancelada.");
             } else {
-                // Tenta realizar o movimento
                 boolean sucesso = partida.realizarJogada(selectedPosition, clickedPosition);
                 selectedPosition = null;
                 updateBoard();
@@ -318,9 +278,6 @@ public class ChessBoardPanel extends JPanel {
         }
     }
 
-    /**
-     * Inicia a simulação de uma partida
-     */
     private void startSimulation() {
         if (isSimulationRunning)
             return;
@@ -329,7 +286,6 @@ public class ChessBoardPanel extends JPanel {
         simulateButton.setText("Simulação em Andamento...");
         simulateButton.setEnabled(false);
 
-        // Sequência de movimentos que resulta em xeque-mate (Mate do Pastor)
         Posicao[][] movimentos = {
                 { new Posicao(6, 4), new Posicao(4, 4) }, // e2-e4
                 { new Posicao(1, 4), new Posicao(3, 4) }, // e7-e5
@@ -350,25 +306,21 @@ public class ChessBoardPanel extends JPanel {
                     Posicao origem = movimentos[moveIndex[0]][0];
                     Posicao destino = movimentos[moveIndex[0]][1];
 
-                    boolean sucesso = partida.realizarJogada(origem, destino);
+                    partida.realizarJogada(origem, destino);
                     updateBoard();
                     updateStatus();
+                    statusLabel.setText("Movimento " + (moveIndex[0] + 1) + " executado");
 
-                    if (sucesso) {
-                        statusLabel.setText("Movimento " + (moveIndex[0] + 1) + " executado");
-
-                        if (partida.getEstado() == EstadoPartida.XEQUE_MATE) {
-                            timer.stop();
-                            JOptionPane.showMessageDialog(ChessBoardPanel.this,
-                                    "Simulação concluída! Xeque-mate alcançado!",
-                                    "Fim da Simulação",
-                                    JOptionPane.INFORMATION_MESSAGE);
-                            isSimulationRunning = false;
-                            simulateButton.setText("Reiniciar Simulação");
-                            simulateButton.setEnabled(true);
-                        }
+                    if (partida.getEstado() == EstadoPartida.XEQUE_MATE) {
+                        timer.stop();
+                        JOptionPane.showMessageDialog(ChessBoardPanel.this,
+                                "Simulação concluída! Xeque-mate alcançado!",
+                                "Fim da Simulação",
+                                JOptionPane.INFORMATION_MESSAGE);
+                        isSimulationRunning = false;
+                        simulateButton.setText("Reiniciar Simulação");
+                        simulateButton.setEnabled(true);
                     }
-
                     moveIndex[0]++;
                 } else {
                     timer.stop();
@@ -382,50 +334,32 @@ public class ChessBoardPanel extends JPanel {
         timer.start();
     }
 
-    /**
-     * Atualiza as informações de status do jogo
-     */
     private void updateStatus() {
         if (partida != null) {
             turnLabel.setText("Vez do Jogador: " + partida.getJogadorAtual().getName() +
                     " (" + partida.getJogadorAtual().getCor() + ")");
 
             switch (partida.getEstado()) {
-                case EM_ANDAMENTO:
-                    statusLabel.setText("Jogo em andamento");
-                    break;
-                case XEQUE:
-                    statusLabel.setText("XEQUE!");
-                    break;
-                case XEQUE_MATE:
-                    statusLabel.setText("XEQUE-MATE!");
-                    break;
-                case EMPATE:
-                    statusLabel.setText("EMPATE!");
-                    break;
+                case EM_ANDAMENTO -> statusLabel.setText("Jogo em andamento");
+                case XEQUE -> statusLabel.setText("XEQUE!");
+                case XEQUE_MATE -> statusLabel.setText("XEQUE-MATE!");
+                case EMPATE -> statusLabel.setText("EMPATE!");
             }
         }
     }
-
-    /**
-     * Retorna a imagem da peça
-     */
 
     private ImageIcon getPieceImage(Peca peca) {
         String cor = peca.getCor().name();
         String tipo = peca.getClass().getSimpleName().toUpperCase();
 
         if (tipo.equals("RAINHA"))
-            tipo = "DAMA"; // ajustar nome
+            tipo = "DAMA";
         if (tipo.equals("CAVAL"))
-            tipo = "CAVALO"; // se sua classe estiver com nome diferente
+            tipo = "CAVALO";
 
         return pieceImages.get(cor + "_" + tipo);
     }
 
-    /**
-     * Retorna o jogador oponente
-     */
     private Jogador getOpponentPlayer() {
         return partida.getJogadorAtual().getCor() == Cor.BRANCO ? partida.getJogadorPreto()
                 : partida.getJogadorBranco();
