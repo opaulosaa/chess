@@ -1,6 +1,10 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Versão modificada da classe Partida para suportar a interface gráfica.
+ * Adiciona métodos getter necessários para a GUI.
+ */
 public class Partida {
     private Tabuleiro tabuleiro;
     private Jogador jogadorPreto;
@@ -22,20 +26,20 @@ public class Partida {
         this.estado = EstadoPartida.EM_ANDAMENTO;
     }
 
-    public boolean realizarJogada(Posicao origem, Posicao destino){
+    public boolean realizarJogada(Posicao origem, Posicao destino) {
         // Verifica se o jogo está em andamento
-        if (this.estado != EstadoPartida.EM_ANDAMENTO && this.estado != EstadoPartida.XEQUE){
+        if (this.estado != EstadoPartida.EM_ANDAMENTO && this.estado != EstadoPartida.XEQUE) {
             System.out.println("Erro: A partida já terminou");
             return false;
         }
         // Validação do movimento
         Movimento movimento = validarMovimento(origem, destino);
-        if (movimento == null){
+        if (movimento == null) {
             System.out.println("Movimento inválido!");
             return false;
         }
-    // Registra apenas o horário do movimento
-    historico.adicionarMovimento();
+        // Registra apenas o horário do movimento
+        historico.adicionarMovimento();
         executarMovimento(movimento);
 
         // Verifica xeque e xeque-mate após o movimento
@@ -62,7 +66,8 @@ public class Partida {
      */
     private boolean estaEmXeque(Cor corRei) {
         Posicao posicaoRei = encontrarRei(corRei);
-        if (posicaoRei == null) return false;
+        if (posicaoRei == null)
+            return false;
         // Para cada peça do adversário, verifica se pode capturar o rei
         Cor corAdversaria = (corRei == Cor.BRANCO) ? Cor.PRETO : Cor.BRANCO;
         for (int linha = 0; linha < Tabuleiro.LINHAS; linha++) {
@@ -86,8 +91,10 @@ public class Partida {
      * Verifica se o rei da cor informada está em xeque-mate.
      */
     private boolean estaEmXequeMate(Cor corRei) {
-        if (!estaEmXeque(corRei)) return false;
-        // Para cada peça do jogador, verifica se existe algum movimento que tira o rei do xeque
+        if (!estaEmXeque(corRei))
+            return false;
+        // Para cada peça do jogador, verifica se existe algum movimento que tira o rei
+        // do xeque
         for (int linha = 0; linha < Tabuleiro.LINHAS; linha++) {
             for (int coluna = 0; coluna < Tabuleiro.COLUNAS; coluna++) {
                 Posicao origem = new Posicao(linha, coluna);
@@ -161,7 +168,8 @@ public class Partida {
     }
 
     /**
-     * Executa o movimento no tabuleiro, atualizando as casas e capturando peças se necessário.
+     * Executa o movimento no tabuleiro, atualizando as casas e capturando peças se
+     * necessário.
      */
     private void executarMovimento(Movimento movimento) {
         // Remove peça da origem
@@ -169,31 +177,46 @@ public class Partida {
         // Se houver captura, adiciona à lista de capturadas
         if (movimento.pecaCapturada() != null) {
             pecasCapturadas.add(movimento.pecaCapturada());
+            // Adiciona pontos ao jogador
+            movimento.jogador().adicionarPontos(movimento.pecaCapturada().getPontuacao());
         }
-        // Coloca peça movida no destino
+        // Coloca peça no destino
         tabuleiro.getCasa(movimento.destino()).setPeca(movimento.pecaMovida());
     }
 
     /**
-     * Alterna o jogador atual.
+     * Alterna o turno entre os jogadores.
      */
     private void trocarTurno() {
-        if (jogadorAtual == jogadorBranco) {
-            jogadorAtual = jogadorPreto;
-        } else {
-            jogadorAtual = jogadorBranco;
-        }
+        this.jogadorAtual = (this.jogadorAtual == jogadorBranco) ? jogadorPreto : jogadorBranco;
     }
 
-    public Tabuleiro getTabuleiro(){
-        return this.tabuleiro;
+    // Métodos getter adicionados para a interface gráfica
+    public Tabuleiro getTabuleiro() {
+        return tabuleiro;
     }
 
-    public Jogador getJogadorAtual(){
-        return this.jogadorAtual;
+    public Jogador getJogadorAtual() {
+        return jogadorAtual;
     }
 
-    public EstadoPartida getEstado(){
-        return this.estado;
+    public Jogador getJogadorBranco() {
+        return jogadorBranco;
+    }
+
+    public Jogador getJogadorPreto() {
+        return jogadorPreto;
+    }
+
+    public EstadoPartida getEstado() {
+        return estado;
+    }
+
+    public List<Peca> getPecasCapturadas() {
+        return new ArrayList<>(pecasCapturadas);
+    }
+
+    public HistoricoMovimentos getHistorico() {
+        return historico;
     }
 }
